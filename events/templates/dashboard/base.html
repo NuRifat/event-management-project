@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}Event Management{% endblock %}</title>
+</head>
+
+<body class="bg-gray-100">
+
+{% load static %}
+{% with current_url=request.resolver_match.url_name %}
+
+<!-- NAVBAR -->
+<nav class="bg-blue-900 text-white px-6 py-4 shadow-md">
+    <div class="flex justify-between items-center">
+
+        <!-- Logo -->
+        <h1 class="font-bold text-xl">Event Management System</h1>
+
+        <!-- Hamburger Button (Mobile) -->
+        <button id="menu-btn" class="md:hidden text-white text-2xl focus:outline-none">
+            ☰
+        </button>
+
+        <!-- Menu Items (Desktop) -->
+        <ul class="hidden md:flex space-x-6 text-sm">
+            <li>
+                <a href="{% url 'home-page' %}"
+                   class="px-3 py-2 rounded 
+                   {% if current_url == 'home-page' %} bg-yellow-400 text-blue-900 
+                   {% else %} hover:text-yellow-300 {% endif %}">
+                   Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'events-page' %}"
+                   class="px-3 py-2 rounded 
+                   {% if current_url == 'events-page' %} bg-yellow-400 text-blue-900 
+                   {% else %} hover:text-yellow-300 {% endif %}">
+                   Events
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'participants-page' %}"
+                   class="px-3 py-2 rounded 
+                   {% if current_url == 'participants-page' %} bg-yellow-400 text-blue-900 
+                   {% else %} hover:text-yellow-300 {% endif %}">
+                   Participants
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'categories-page' %}"
+                   class="px-3 py-2 rounded 
+                   {% if current_url == 'categories-page' %} bg-yellow-400 text-blue-900 
+                   {% else %} hover:text-yellow-300 {% endif %}">
+                   Categories
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <ul id="mobile-menu" class="mt-3 hidden flex-col space-y-2 md:hidden text-sm">
+
+        <li>
+            <a href="{% url 'home-page' %}"
+               class="block px-3 py-2 rounded 
+               {% if current_url == 'home-page' %} bg-yellow-400 text-blue-900 
+               {% else %} hover:bg-blue-700 {% endif %}">
+               Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'events-page' %}"
+               class="block px-3 py-2 rounded 
+               {% if current_url == 'events-page' %} bg-yellow-400 text-blue-900 
+               {% else %} hover:bg-blue-700 {% endif %}">
+               Events
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'participants-page' %}"
+               class="block px-3 py-2 rounded 
+               {% if current_url == 'participants-page' %} bg-yellow-400 text-blue-900 
+               {% else %} hover:bg-blue-700 {% endif %}">
+               Participants
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'categories-page' %}"
+               class="block px-3 py-2 rounded 
+               {% if current_url == 'categories-page' %} bg-yellow-400 text-blue-900 
+               {% else %} hover:bg-blue-700 {% endif %}">
+               Categories
+            </a>
+        </li>
+
+    </ul>
+</nav>
+
+{% endwith %}
+
+<!-- JS for Mobile Toggle -->
+<script>
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+    });
+</script>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

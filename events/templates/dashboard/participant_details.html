@@ -1,0 +1,28 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 bg-white p-6 rounded-xl shadow relative">
+
+    <!-- Close Button (X) -->
+    <a href="/events/participants/" 
+       class="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-xl font-bold">
+        ✕
+    </a>
+
+    <h2 class="text-2xl font-bold mb-4">Participant Details</h2>
+
+    <div class="space-y-2 text-gray-700">
+        <p><strong>Name:</strong> {{ participant.name }}</p>
+        <p><strong>Date:</strong> {{ participant.email }}</p>
+        <p><strong>Events:</strong></p>
+        <ul class="list-disc list-inside ml-4">
+            {% for event in participant.events.all %}
+            <li>{{ event.name }} ({{ event.date }})</li>
+            {% empty %}
+            <li>No events</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

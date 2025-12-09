@@ -1,0 +1,136 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Main Page{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 text-white px-6 py-12 md:px-12">
+    <h2 class="text-3xl md:text-4xl font-extrabold mb-2">Welcome, Organizer!</h2>
+    <p class="text-lg md:text-xl opacity-90">
+        Manage events, participants, and categories with ease.
+    </p>
+</section>
+
+
+<!-- DASHBOARD STATS -->
+<div class="max-w-6xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+
+    <a href="?type=all"
+       class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-blue-500 text-center">
+        <h3 class="text-3xl font-bold">{{ total_participants }}</h3>
+        <p class="text-gray-600 font-medium">Total Participants</p>
+    </a>
+
+    <a href="?type=all"
+       class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-yellow-500 text-center">
+        <h3 class="text-3xl font-bold">{{ total_events }}</h3>
+        <p class="text-gray-600 font-medium">Total Events</p>
+    </a>
+
+    <a href="?type=upcoming"
+       class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-green-500 text-center">
+        <h3 class="text-3xl font-bold">{{ total_upcoming }}</h3>
+        <p class="text-gray-600 font-medium">Upcoming Events</p>
+    </a>
+
+    <a href="?type=past"
+       class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-red-500 text-center">
+        <h3 class="text-3xl font-bold">{{ total_past }}</h3>
+        <p class="text-gray-600 font-medium">Past Events</p>
+    </a>
+
+</div>
+
+
+
+<!-- TODAY'S EVENTS -->
+<div class="max-w-6xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold mb-4">Today's Events</h2>
+
+    {% if todays_events %}
+        <div class="space-y-4">
+
+            {% for event in todays_events %}
+            <div class="p-5 border rounded-lg bg-blue-50 flex justify-between items-start md:items-center gap-4">
+
+                <div>
+                    <h3 class="font-bold text-lg">{{ event.name }}</h3>
+                    <p class="text-sm text-gray-700">
+                        📍 {{ event.location }} |
+                        🕒 {{ event.time }}
+                    </p>
+                </div>
+
+                <a href="{% url 'event-details' event.id %}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg whitespace-nowrap">
+                    View
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <p class="text-gray-600 italic">No events today.</p>
+    {% endif %}
+</div>
+
+
+
+<!-- EVENTS TABLE -->
+<div class="max-w-6xl mx-auto mt-12 mb-10">
+
+    <!-- Header Title -->
+    <div class="bg-gradient-to-r from-yellow-300 via-orange-400 to-blue-500 p-6 rounded-t-xl text-white font-bold text-xl">
+        {% if type == 'upcoming' %}
+            Upcoming Events
+        {% elif type == 'past' %}
+            Past Events
+        {% else %}
+            All Events
+        {% endif %}
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white p-6 rounded-b-xl shadow overflow-x-auto">
+
+        <!-- Add Button -->
+        <a href="{% url 'create-event' %}"
+           class="inline-block mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+            + Add Event
+        </a>
+
+        <table class="w-full min-w-[600px] text-left">
+            <thead>
+                <tr class="text-gray-700 border-b">
+                    <th class="py-3 px-2">Name</th>
+                    <th class="px-2">Date</th>
+                    <th class="px-2">Location</th>
+                    <th class="px-2">Category</th>
+                    <th class="px-2">Participants</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for event in events %}
+                <tr class="border-b hover:bg-gray-50 transition">
+                    <td class="py-3 px-2">{{ event.name }}</td>
+                    <td class="px-2">{{ event.date }}</td>
+                    <td class="px-2">{{ event.location }}</td>
+                    <td class="px-2">{{ event.category.name }}</td>
+                    <td class="px-2">{{ event.participants.count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-gray-500">
+                        No events found for this filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}

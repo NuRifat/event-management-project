@@ -1,0 +1,103 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Participants List{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 space-y-2 pointer-events-none">
+    {% for message in messages %}
+      <div class="relative px-6 py-3 rounded-lg shadow-md text-white pointer-events-auto 
+              {% if message.tags == 'success' %} bg-green-500 
+              {% elif message.tags == 'error' %} bg-red-500 
+              {% else %} bg-blue-500 {% endif %}">
+        {{ message }}
+        <button onclick="this.parentElement.remove()" class="absolute top-1 right-2 font-bold text-white">×</button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="max-w-6xl mx-auto mt-10 px-4">
+
+    <!-- HEADER -->
+    <h1 class="text-3xl font-bold mb-6 text-blue-900">Participants</h1>
+
+    <!-- SEARCH BAR -->
+    <form method="GET" class="mb-6 flex w-full max-sm:flex-col">
+        <input 
+            type="text" 
+            name="q"
+            value="{{ query }}"
+            placeholder="Search participants..."
+            class="flex-1 px-4 py-2 border-2 rounded-l-lg max-sm:rounded-lg max-sm:mb-2 focus:ring focus:ring-blue-300"
+        >
+        <button 
+            class="bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-500 
+                   text-white px-6 py-2 rounded-r-lg max-sm:rounded-lg font-semibold hover:opacity-80">
+            Search
+        </button>
+    </form>
+
+    <!-- PARTICIPANTS TABLE CARD -->
+    <div class="bg-white p-6 rounded-xl shadow-xl border border-gray-200 mb-5">
+
+        <a href="{% url 'create-participant' %}"
+          class="mb-5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block">
+          Add Participant
+        </a>
+        
+        <!-- Responsive table wrapper -->
+        <div class="overflow-x-auto">
+
+            <table class="w-full text-left mt-4 min-w-[600px]">
+                <thead>
+                    <tr class="text-gray-700 border-b bg-blue-50">
+                        <th class="py-3 px-2">Name</th>
+                        <th class="px-2">Email</th>
+                        <th class="px-2">Events</th>
+                        <th class="px-2 text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for participant in participants %}
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="py-3 px-2">{{ participant.name }}</td>
+                        <td class="px-2">{{ participant.email }}</td>
+                        <td class="px-2">{{ participant.events.count }}</td>
+
+                        <!-- ACTION BUTTONS -->
+                        <td class="px-2 py-3 text-center whitespace-nowrap flex gap-2 justify-center">
+
+                            <a href="{% url 'participant-details' participant.id %}" 
+                               class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
+                               Details
+                            </a>
+
+                            <form action="{% url 'delete-participant' participant.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" 
+                                        class="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-orange-700 shadow">
+                                    Delete
+                                </button>
+                            </form>
+
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-4 text-center text-gray-500">
+                            No participants found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

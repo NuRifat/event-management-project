@@ -1,0 +1,107 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Events List{% endblock %}
+
+{% block content %}
+
+<!-- TOAST / MESSAGES -->
+{% if messages %}
+<div class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 space-y-2">
+    {% for message in messages %}
+    <div
+        class="relative px-6 py-3 rounded-lg shadow-lg text-white
+               {% if message.tags == 'success' %} bg-green-500
+               {% elif message.tags == 'error' %} bg-red-500
+               {% else %} bg-blue-500 {% endif %}">
+        {{ message }}
+        <button onclick="this.parentElement.remove()"
+                class="absolute top-1 right-2 font-bold text-white text-lg leading-none">×</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="max-w-6xl mx-auto mt-10 px-4">
+
+    <!-- HEADER -->
+    <h1 class="text-3xl md:text-4xl font-extrabold mb-6 text-blue-900">Events</h1>
+
+    <!-- SEARCH BAR -->
+    <form method="GET" class="mb-6 flex flex-col sm:flex-row gap-3 sm:gap-0">
+        <input 
+            type="text" 
+            name="q"
+            value="{{ query }}"
+            placeholder="Search by name or date..."
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:ring focus:ring-blue-300"
+        >
+        <button 
+            class="bg-gradient-to-r from-yellow-400 via-orange-500 to-blue-600 text-white px-6 py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-semibold hover:opacity-80 transition">
+            Search
+        </button>
+    </form>
+
+    <!-- EVENTS TABLE WRAPPER -->
+    <div class="bg-white mb-6 p-6 rounded-xl shadow-xl border border-gray-200">
+
+        <!-- ADD EVENT BUTTON -->
+        <a href="{% url 'create-event' %}"
+           class="inline-block mb-5 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow transition">
+           + Add Event
+        </a>
+
+        <!-- TABLE SECTION WITH MOBILE SCROLL -->
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[700px] text-left">
+                <thead>
+                    <tr class="text-gray-700 border-b bg-blue-50">
+                        <th class="py-3 px-3">Name</th>
+                        <th class="px-3">Date</th>
+                        <th class="px-3">Location</th>
+                        <th class="px-3">Category</th>
+                        <th class="px-3">Participants</th>
+                        <th class="px-3 text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for event in events %}
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="py-3 px-3 font-medium">{{ event.name }}</td>
+                        <td class="px-3">{{ event.date }}</td>
+                        <td class="px-3 max-w-[160px] truncate">{{ event.location }}</td>
+                        <td class="px-3">{{ event.category.name }}</td>
+                        <td class="px-3">{{ event.participants.count }}</td>
+
+                        <!-- ACTION BUTTONS -->
+                        <td class="px-3 py-3 text-center whitespace-nowrap space-x-2">
+
+                            <a href="{% url 'event-edit' event.id %}"
+                               class="bg-orange-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-orange-600 shadow">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'event-details' event.id %}"
+                               class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
+                                Details
+                            </a>
+
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-6 text-center text-gray-500">
+                            No events found.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
