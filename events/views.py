@@ -7,6 +7,8 @@ from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 
+def home(request):
+    return render(request, 'events/home.html')
 
 def organizer_dashboard(request):
     type = request.GET.get('type', 'all')
