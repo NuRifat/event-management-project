@@ -70,7 +70,7 @@ WSGI_APPLICATION = 'event_management_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# For postgreSQL
+#For postgreSQL
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
