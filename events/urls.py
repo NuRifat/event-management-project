@@ -5,14 +5,14 @@ from events.views import (
 )
 
 urlpatterns = [
-    path('home/', organizer_dashboard, name="home-page"),  # /events/home/
-    path('events/', events_page, name="events-page"),             # /events/
-    path("events/<int:id>/", event_details, name="event-details"),         # /events/<id>/
-    path("events/<int:id>/edit/", event_edit, name="event-edit"),          # /events/<id>/edit/
-    path('event_form/', create_event, name="create-event"),         # /events/event_form/
-    path('participants/', participants_page, name="participants-page"),  # /events/participants/
-    path("participants/<int:id>/", participant_details, name="participant-details"),  # optional adjust if needed
-    path("participant_form/", create_participant, name="create-participant"),
-    path("delete_participate/<int:id>/", participant_delete, name="delete-participant"),
-    path("categories/", categories, name="categories-page"),
+    path('', events_page, name="events-page"),
+    path('home/', organizer_dashboard, name="home-page"), 
+    path('<int:id>/', event_details, name="event-details"),
+    path('<int:id>/edit/', event_edit, name="event-edit"),
+    path('event_form/', create_event, name="create-event"),
+    path('participants/', participants_page, name="participants-page"),
+    path('<int:id>/participant/', participant_details, name="participant-details"),
+    path('participant_form/', create_participant, name="create-participant"),
+    path('delete_participate/<int:id>/', participant_delete, name="delete-participant"),
+    path('categories/', categories, name="categories-page"),
 ]
