@@ -13,7 +13,7 @@ class Category(models.Model):
     name = models.CharField(
         max_length=50,
         choices=CATEGORY_CHOICES,
-        default="SCIENCE"
+        default="SCIENCE" 
     )
     description = models.CharField(max_length=255, blank=True)
 
