@@ -2,7 +2,7 @@ asgiref==3.11.0
 dj-database-url==3.0.1
 Django==5.2.8
 gunicorn
-django-debug-toolbar==6.1.0
+#django-debug-toolbar==6.1.0
 Faker==38.2.0
 psycopg2-binary==2.9.11
 sqlparse==0.5.3
