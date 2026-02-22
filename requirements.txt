@@ -3,6 +3,8 @@ dj-database-url==3.0.1
 Django==5.2.8
 #django-debug-toolbar==6.1.0
 Faker==38.2.0
+gunicorn==25.1.0
+packaging==26.0
 pillow==12.1.1
 psycopg2-binary==2.9.11
 python-decouple==3.8
