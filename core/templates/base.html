@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Event Management{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans min-h-screen flex flex-col">
+
+{% if request.user.is_authenticated %}
+  {% include "logged_nav.html" %}
+{% else %}
+  {% include "non_logged_nav.html" %}
+{% endif %}
+
+<main class="flex-grow">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer id="contact" class="bg-gray-800 text-white py-12 mt-20">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-wrap justify-between">
+
+      <div class="w-full md:w-1/4 mb-8">
+        <h3 class="text-lg font-semibold mb-4">Event Management</h3>
+        <p class="text-gray-400">
+          Simplifying event discovery, organization, and participation.
+        </p>
+      </div>
+
+      <div class="w-full md:w-1/4 mb-8">
+        <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+        <ul class="text-gray-400 space-y-2">
+          <li><a href="{% url 'home' %}" class="hover:text-white">Home</a></li>
+          <li><a href="{% url 'events-page' %}" class="hover:text-white">Events</a></li>
+          <li><a href="#contact" class="hover:text-white">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="w-full md:w-1/4 mb-8">
+        <h4 class="text-lg font-semibold mb-4">Connect</h4>
+        <ul class="text-gray-400 space-y-2">
+          <li><a href="#" class="hover:text-white">Facebook</a></li>
+          <li><a href="#" class="hover:text-white">LinkedIn</a></li>
+          <li><a href="#" class="hover:text-white">Twitter</a></li>
+        </ul>
+      </div>
+
+      <div class="w-full md:w-1/4">
+        <h4 class="text-lg font-semibold mb-4">Newsletter</h4>
+        <form class="flex">
+          <input
+            type="email"
+            placeholder="Your email"
+            class="w-full px-3 py-2 text-gray-700 bg-gray-200 rounded-l-md focus:outline-none"
+          />
+          <button
+            type="button"
+            class="bg-blue-500 px-4 py-2 rounded-r-md hover:bg-blue-600"
+          >
+            Subscribe
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="border-t border-gray-700 mt-12 pt-6 text-center text-sm text-gray-400">
+      &copy; 2026 Event Management System. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- GLOBAL SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =============================
+    // Mobile Menu Toggle
+    // =============================
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener("click", function () {
+            mobileMenu.classList.toggle("hidden");
+        });
+    }
+
+    // =============================
+    // Avatar Dropdown Toggle
+    // =============================
+    const avatarBtn = document.getElementById("avatar-btn");
+    const dropdown = document.getElementById("avatar-dropdown");
+
+    if (avatarBtn && dropdown) {
+
+        avatarBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("hidden");
+        });
+
+        // Close when clicking outside
+        document.addEventListener("click", function (e) {
+            if (!dropdown.contains(e.target) && !avatarBtn.contains(e.target)) {
+                dropdown.classList.add("hidden");
+            }
+        });
+    }
+
+});
+</script>
+
+</body>
+</html>

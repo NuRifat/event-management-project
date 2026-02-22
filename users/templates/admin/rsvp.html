@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto mt-10 px-4">
+    <h1 class="text-3xl font-bold mb-6 text-blue-900">
+        My RSVP Events
+    </h1>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg">
+        {% for event in rsvp_events %}
+            <div class="border-b py-4">
+                <h2 class="text-xl font-semibold">{{ event.name }}</h2>
+                <p class="text-gray-600">
+                    {{ event.date }} | {{ event.time }}
+                </p>
+                <p class="text-gray-600">
+                    {{ event.location }}
+                </p>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">
+                You have not RSVP’d to any events yet.
+            </p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

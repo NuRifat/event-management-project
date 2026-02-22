@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}Event Management{% endblock %}</title>
+</head>
+
+<body class="bg-gray-100">
+
+{% load static %}
+{% with current_url=request.resolver_match.url_name %}
+
+<!-- NAVBAR -->
+<nav class="bg-blue-900 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- LEFT: Logo -->
+        <h1 class="font-bold text-xl tracking-wide">
+            Event Management System
+        </h1>
+
+        <!-- MOBILE TOGGLE -->
+        <button id="menu-btn"
+                class="md:hidden text-2xl focus:outline-none">
+            ☰
+        </button>
+
+        <!-- DESKTOP MENU -->
+        <div class="hidden md:flex items-center space-x-8">
+
+            <!-- NAV LINKS -->
+            <ul class="flex space-x-6 text-sm font-medium">
+                <li>
+                    <a href="{% url 'home-page' %}"
+                       class="{% if current_url == 'home-page' %}text-yellow-300{% else %}hover:text-yellow-300{% endif %}">
+                        Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'events-page' %}"
+                       class="{% if current_url == 'events-page' %}text-yellow-300{% else %}hover:text-yellow-300{% endif %}">
+                        Events
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'participants-page' %}"
+                       class="{% if current_url == 'participants-page' %}text-yellow-300{% else %}hover:text-yellow-300{% endif %}">
+                        Participants
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'categories-page' %}"
+                       class="{% if current_url == 'categories-page' %}text-yellow-300{% else %}hover:text-yellow-300{% endif %}">
+                        Categories
+                    </a>
+                </li>
+            </ul>
+
+            <!-- AUTH BUTTONS (PLACEHOLDERS) -->
+            <div class="flex items-center space-x-3">
+                <a href="#"
+                   class="px-4 py-2 border border-yellow-400 rounded-md text-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition">
+                    Sign In
+                </a>
+
+                <a href="#"
+                   class="px-4 py-2 bg-yellow-400 text-blue-900 rounded-md font-semibold hover:bg-yellow-300 transition">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-3 text-sm">
+
+        <a href="{% url 'home-page' %}" class="block hover:text-yellow-300">
+            Dashboard
+        </a>
+        <a href="{% url 'events-page' %}" class="block hover:text-yellow-300">
+            Events
+        </a>
+        <a href="{% url 'participants-page' %}" class="block hover:text-yellow-300">
+            Participants
+        </a>
+        <a href="{% url 'categories-page' %}" class="block hover:text-yellow-300">
+            Categories
+        </a>
+
+        <hr class="border-blue-700">
+
+        <!-- AUTH (PLACEHOLDERS) -->
+        <a href="#"
+           class="block text-center border border-yellow-400 rounded-md py-2 text-yellow-400 hover:bg-yellow-400 hover:text-blue-900">
+            Sign In
+        </a>
+
+        <a href="#"
+           class="block text-center bg-yellow-400 text-blue-900 rounded-md py-2 font-semibold hover:bg-yellow-300">
+            Sign Up
+        </a>
+    </div>
+</nav>
+
+
+{% endwith %}
+
+<!-- JS for Mobile Toggle -->
+<script>
+    const menuBtn = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    menuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+    });
+</script>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

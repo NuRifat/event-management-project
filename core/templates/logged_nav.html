@@ -1,0 +1,118 @@
+<nav class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+    <h1 class="font-bold text-xl">Event Management</h1>
+
+    <!-- Mobile Menu Button -->
+    <button id="menu-btn" class="md:hidden text-2xl focus:outline-none">
+        ☰
+    </button>
+
+    <!-- Desktop Menu -->
+    <div class="hidden md:flex items-center space-x-6 font-medium">
+
+        {% with role=request.user.groups.first %}
+
+            <a href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+                Home
+            </a>
+
+            {% if role and role.name in "Admin Organizer" %}
+                <a href="{% url 'organizer-dashboard' %}"
+                   class="{% if request.resolver_match.url_name == 'organizer-dashboard' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+                   Dashboard
+                </a>
+
+                <a href="{% url 'user-list' %}"
+                   class="{% if request.resolver_match.url_name == 'user-list' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+                   Participants
+                </a>
+            {% endif %}
+
+        {% endwith %}
+
+        <a href="{% url 'events-page' %}"
+           class="{% if request.resolver_match.url_name == 'events-page' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+           Events
+        </a>
+
+        <a href="{% url 'categories-page' %}"
+           class="{% if request.resolver_match.url_name == 'categories-page' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+           Categories
+        </a>
+
+        <a href="{% url 'participant-rsvp-dashboard' %}"
+           class="{% if request.resolver_match.url_name == 'participant-rsvp-dashboard' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+           RSVP
+        </a>
+
+        {% with role=request.user.groups.first %}
+            {% if role and role.name == "Admin" %}
+                <a href="{% url 'create-group' %}"
+                   class="{% if request.resolver_match.url_name == 'create-group' %}text-yellow-300 underline decoration-yellow-300 underline-offset-4{% else %}hover:text-yellow-300{% endif %}">
+                   Group
+                </a>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Avatar -->
+        <div class="relative">
+            <button id="avatar-btn"
+                class="w-10 h-10 bg-yellow-400 text-blue-900 rounded-full flex items-center justify-center font-bold focus:outline-none">
+
+                {% if request.user.first_name and request.user.last_name %}
+                    {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                {% else %}
+                    {{ request.user.username|first|upper }}
+                {% endif %}
+
+            </button>
+
+            <div id="avatar-dropdown"
+                class="absolute right-0 mt-2 w-56 bg-white text-black rounded-md shadow-lg hidden">
+
+                <div class="px-4 py-3 border-b">
+                    {% if request.user.get_full_name %}
+                        <p class="text-sm font-semibold">{{ request.user.get_full_name }}</p>
+                    {% else %}
+                        <p class="text-sm font-semibold">{{ request.user.username }}</p>
+                    {% endif %}
+                    <p class="text-xs text-gray-500">{{ request.user.email }}</p>
+                </div>
+
+                <form method="post" action="{% url 'sign-out' %}">
+                    {% csrf_token %}
+                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2 bg-blue-800">
+
+    {% with role=request.user.groups.first %}
+        {% if role and role.name in "Admin Organizer" %}
+            <a href="{% url 'organizer-dashboard' %}" class="block hover:text-yellow-300">Dashboard</a>
+            <a href="{% url 'user-list' %}" class="block hover:text-yellow-300">Participants</a>
+        {% endif %}
+    {% endwith %}
+
+    <a href="{% url 'home' %}" class="block hover:text-yellow-300">Home</a>
+    <a href="{% url 'events-page' %}" class="block hover:text-yellow-300">Events</a>
+    <a href="{% url 'categories-page' %}" class="block hover:text-yellow-300">Categories</a>
+    <a href="{% url 'participant-rsvp-dashboard' %}" class="block hover:text-yellow-300">RSVP</a>
+
+    {% with role=request.user.groups.first %}
+        {% if role and role.name == "Admin" %}
+            <a href="{% url 'create-group' %}" class="block hover:text-yellow-300">Group</a>
+        {% endif %}
+    {% endwith %}
+
+  </div>
+</nav>

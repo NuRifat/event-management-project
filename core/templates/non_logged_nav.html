@@ -1,0 +1,29 @@
+<nav class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="font-bold text-xl">Event Management</h1>
+
+    <button id="menu-btn" class="md:hidden text-2xl">☰</button>
+
+    <div class="hidden md:flex items-center space-x-6 font-medium">
+      <a href="{% url 'home' %}" class="hover:text-yellow-300">Home</a>
+      <a href="#events" class="hover:text-yellow-300">Events</a>
+      <a href="#contact" class="hover:text-yellow-300">Contact</a>
+
+      <a href="{% url 'sign-in' %}"
+         class="px-4 py-2 border border-yellow-400 text-yellow-400 rounded-md hover:bg-yellow-400 hover:text-blue-900">
+        Sign In
+      </a>
+
+      <a href="{% url 'sign-up' %}"
+         class="px-4 py-2 bg-yellow-400 text-blue-900 rounded-md font-semibold hover:bg-yellow-300">
+        Sign Up
+      </a>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2">
+    <a href="{% url 'home' %}" class="block hover:text-yellow-300">Home</a>
+    <a href="#events" class="block hover:text-yellow-300">Events</a>
+    <a href="#contact" class="block hover:text-yellow-300">Contact</a>
+  </div>
+</nav>

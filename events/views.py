@@ -1,15 +1,27 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from events.models import Event, Participant, Category
+from events.models import Event, Category
 from datetime import date, datetime
-from events.forms import EventForm, ParticipantForm
+from events.forms import EventForm
 from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required,user_passes_test
+from django.urls import reverse
+from django.core.mail import send_mail
+from django.conf import settings
 
-def home(request):
-    return render(request, 'events/home.html')
+# Create your views here.
+def is_admin(user):
+    return user.groups.filter(name='Admin').exists()
+def is_organizer(user):
+    return user.groups.filter(name='Organizer').exists()
+def is_participant(user):
+    return user.groups.filter(name='Participant').exists()
 
+
+@user_passes_test(lambda u: is_organizer(u) or is_admin(u), login_url='no-permission')
 def organizer_dashboard(request):
     type = request.GET.get('type', 'all')
     today = date.today()
@@ -20,7 +32,7 @@ def organizer_dashboard(request):
     upcoming = base_events.filter(date__gt=today)
     past = base_events.filter(date__lt=today)
 
-    total_participants = Participant.objects.count()
+    total_participants = User.objects.count()
 
     if type == "upcoming":
         events = upcoming
@@ -40,6 +52,7 @@ def organizer_dashboard(request):
     }
     return render(request, "dashboard/organizer_dashboard.html", context)
 
+@login_required
 def events_page(request):
     query = request.GET.get("q", "").strip()
 
@@ -70,7 +83,7 @@ def event_details(request, id):
     previous_url = request.META.get("HTTP_REFERER", "/events/events/")
     return render(request, "dashboard/event_details.html", {"event": event, "previous_url": previous_url})
 
-
+@user_passes_test(lambda u: is_organizer(u) or is_admin(u), login_url='no-permission')
 def event_edit(request, id):
     event = get_object_or_404(Event, id=id)
     
@@ -85,9 +98,10 @@ def event_edit(request, id):
 
     return render(request, "dashboard/event_edit.html", {"form": form})
 
+@user_passes_test(lambda u: is_organizer(u) or is_admin(u), login_url='no-permission')
 def create_event(request):
     if request.method == "POST":
-        form = EventForm(request.POST)
+        form = EventForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request,"Event has been Added")
@@ -102,54 +116,83 @@ def create_event(request):
     }
     return render(request, "dashboard/CreateEvent.html", context)
 
-def participants_page(request):
-    query = request.GET.get("q", "").strip()
+# def participants_page(request):
+#     query = request.GET.get("q", "").strip()
 
-    participants = Participant.objects.prefetch_related('events')
+#     participants = User.objects.prefetch_related('events')
 
-    if query:
-        filters = Q(name__icontains=query)
-        participants = participants.filter(filters)
+#     if query:
+#         filters = Q(name__icontains=query)
+#         participants = participants.filter(filters)
 
-    context = {
-        "participants": participants,
-        "query": query,
-    }
-    return render(request, "dashboard/participants_page.html", context)
+#     context = {
+#         "participants": participants,
+#         "query": query,
+#     }
+#     return render(request, "dashboard/participants_page.html", context)
 
-def create_participant(request):
-    if request.method == "POST":
-        form = ParticipantForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request,"Participant has been Added")
-            return redirect("participants-page")
-    else:
-        form = ParticipantForm()
+# def create_participant(request):
+#     if request.method == "POST":
+#         form = ParticipantForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request,"Participant has been Added")
+#             return redirect("participants-page")
+#     else:
+#         form = ParticipantForm()
 
-    previous_url = request.META.get("HTTP_REFERER", "/events/events/")
+#     previous_url = request.META.get("HTTP_REFERER", "/events/events/")
 
-    context = {
-        "form": form,
-        "previous_url": previous_url
-    }
-    return render(request, "dashboard/CreateParticipant.html", context)
+#     context = {
+#         "form": form,
+#         "previous_url": previous_url
+#     }
+#     return render(request, "dashboard/CreateParticipant.html", context)
 
-def participant_details(request, id):
-    participant = get_object_or_404(Participant, id=id)
-    return render(request, "dashboard/participant_details.html", {"participant": participant})
+# def participant_details(request, id):
+#     participant = get_object_or_404(User, id=id)
+#     return render(request, "dashboard/participant_details.html", {"participant": participant})
 
-def participant_delete(request, id):
-    participate = get_object_or_404(Participant, id=id)
+# def participant_delete(request, id):
+#     participate = get_object_or_404(User, id=id)
     
-    if request.method == "POST":
-        participate.delete()
-        messages.success(request,"Participate has been Removed")
-        return redirect("participants-page")  
-    else:
-        messages.error(request,"Something went wrong")
-        return redirect("participants-page")
-    
+#     if request.method == "POST":
+#         participate.delete()
+#         messages.success(request,"Participate has been Removed")
+#         return redirect("participants-page")  
+#     else:
+#         messages.error(request,"Something went wrong")
+#         return redirect("participants-page")
+
+@login_required
 def categories(request):
     categories = Category.objects.prefetch_related('event_category')
     return render(request, "dashboard/categories_page.html", {"categories":categories})
+
+
+@login_required
+def rsvp_event(request, id):
+    event = get_object_or_404(Event, id=id)
+
+    if event.participants.filter(id=request.user.id).exists():
+        messages.warning(request, "You have already RSVP'd to this event.")
+        return redirect("events-page")
+
+    event.participants.add(request.user)
+
+    subject = f"RSVP Confirmation - {event.name}"
+    message = (
+        f"Hi {request.user.username},\n\n"
+        f"You have successfully RSVP'd for:\n\n"
+        f"Event: {event.name}\n"
+        f"Date: {event.date}\n"
+        f"Time: {event.time}\n"
+        f"Location: {event.location}\n\n"
+        f"We look forward to seeing you!\n\n"
+        f"Thank you."
+    )
+
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [request.user.email])
+
+    messages.success(request, "Successfully RSVP'd! A confirmation email has been sent.")
+    return redirect("events-page")

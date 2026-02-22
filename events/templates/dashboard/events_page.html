@@ -1,4 +1,4 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Events List{% endblock %}
 
@@ -67,7 +67,7 @@
                 <tbody>
                 {% for event in events %}
                     <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="py-3 px-3 font-medium">{{ event.name }}</td>
+                        <td class="py-3 px-3 font-medium"><a href="{% url 'event-details' event.id %}">{{ event.name }}</a></td>
                         <td class="px-3">{{ event.date }}</td>
                         <td class="px-3 max-w-[160px] truncate">{{ event.location }}</td>
                         <td class="px-3">{{ event.category.name }}</td>
@@ -77,14 +77,24 @@
                         <td class="px-3 py-3 text-center whitespace-nowrap space-x-2">
 
                             <a href="{% url 'event-edit' event.id %}"
-                               class="bg-orange-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-orange-600 shadow">
+                               class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
                                 Edit
                             </a>
 
-                            <a href="{% url 'event-details' event.id %}"
-                               class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
-                                Details
-                            </a>
+                            {% if user.is_authenticated %}
+                                {% if user in event.participants.all %}
+                                    <button disabled
+                                        class="bg-gray-400 text-white px-3 py-1.5 rounded-lg text-sm font-semibold shadow cursor-not-allowed">
+                                        RSVP'd
+                                    </button>
+                                {% else %}
+                                    <a href="{% url 'rsvp-event' event.id %}"
+                                    class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm font-semibold hover:bg-green-700 shadow">
+                                        RSVP
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+
 
                         </td>
                     </tr>

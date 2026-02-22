@@ -41,11 +41,6 @@
 
     <!-- PARTICIPANTS TABLE CARD -->
     <div class="bg-white p-6 rounded-xl shadow-xl border border-gray-200 mb-5">
-
-        <a href="{% url 'create-participant' %}"
-          class="mb-5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-block">
-          Add Participant
-        </a>
         
         <!-- Responsive table wrapper -->
         <div class="overflow-x-auto">
@@ -53,35 +48,47 @@
             <table class="w-full text-left mt-4 min-w-[600px]">
                 <thead>
                     <tr class="text-gray-700 border-b bg-blue-50">
-                        <th class="py-3 px-2">Name</th>
+                        <th class="py-3 px-2">No.</th>
+                        <th class="px-2">Username</th>
                         <th class="px-2">Email</th>
-                        <th class="px-2">Events</th>
+                        <th class="px-2">UserId</th>
+                        <th class="px-2">Current Role</th>
                         <th class="px-2 text-center">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                {% for participant in participants %}
+                {% for user in users %}
                     <tr class="border-b hover:bg-gray-50 transition">
-                        <td class="py-3 px-2">{{ participant.name }}</td>
-                        <td class="px-2">{{ participant.email }}</td>
-                        <td class="px-2">{{ participant.events.count }}</td>
+                        <td class="py-3 px-2">{{forloop.counter}}</td>
+                        <td class="px-2">{{user.first_name}} {{user.last_name}}</td>
+                        <td class="px-2">{{ user.email }}</td>
+                        <td class="px-2">{{ user.id }}</td>
+                        <td class="px-2">{{ user.group_name }}</td>
 
                         <!-- ACTION BUTTONS -->
                         <td class="px-2 py-3 text-center whitespace-nowrap flex gap-2 justify-center">
-
-                            <a href="{% url 'participant-details' participant.id %}" 
+                            <a href= "{% url 'user-details' user.id %}"
                                class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
                                Details
                             </a>
+                            <a href= "{% url 'assign-role' user.id %}"
+                               class="bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-green-700 shadow">
+                               Change Role
+                            </a>
 
-                            <form action="{% url 'delete-participant' participant.id %}" method="POST">
+                            {% comment %} <a href= "{% url 'participant-details' participant.id %}"
+                               class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-blue-700 shadow">
+                               Details
+                            </a>{% endcomment %}
+
+                            <form action="{% url 'delete-user' user.id %}" method="POST">
                                 {% csrf_token %}
                                 <button type="submit" 
                                         class="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-semibold hover:bg-orange-700 shadow">
                                     Delete
                                 </button>
-                            </form>
+                            </form> 
 
                         </td>
                     </tr>
