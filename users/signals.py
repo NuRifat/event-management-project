@@ -5,6 +5,16 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 
+
+@receiver(post_save, sender=User)
+def assign_default_participant_group(sender, instance, created, **kwargs):
+    if created:
+        try:
+            participant_group = Group.objects.get(name="Participant")
+            instance.groups.add(participant_group)
+        except Group.DoesNotExist:
+            pass
+
 @receiver(post_save, sender=User)
 def send_activation_email(sender, instance, created, **kwargs):
     if created:

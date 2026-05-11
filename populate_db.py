@@ -7,11 +7,13 @@ from faker import Faker
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "event_management_project.settings")
 django.setup()
 
-from events.models import Category, Event, Participant   # update app name if needed
+from django.contrib.auth.models import User
+from events.models import Category, Event
 
 fake = Faker()
 
-# CREATE CATEGORIES (choices)
+
+# CREATE CATEGORIES
 def create_categories():
     CATEGORY_CHOICES = [
         ("SCIENCE", "Science Event"),
@@ -29,7 +31,22 @@ def create_categories():
             name=value,
             description=f"{label} related programs."
         )
+
     print("Categories created successfully!")
+
+
+# CREATE USERS
+def create_users(n=30):
+    User.objects.exclude(is_superuser=True).delete()
+
+    for _ in range(n):
+        User.objects.create_user(
+            username=fake.unique.user_name(),
+            email=fake.unique.email(),
+            password="1234"
+        )
+
+    print(f"{n} Users created successfully!")
 
 
 # CREATE EVENTS
@@ -37,9 +54,10 @@ def create_events(n=20):
     Event.objects.all().delete()
 
     categories = list(Category.objects.all())
+    users = list(User.objects.filter(is_superuser=False))
 
     for _ in range(n):
-        Event.objects.create(
+        event = Event.objects.create(
             name=fake.catch_phrase(),
             description=fake.text(max_nb_chars=200),
             date=fake.date_between(start_date="-30d", end_date="+30d"),
@@ -48,34 +66,25 @@ def create_events(n=20):
             category=random.choice(categories)
         )
 
-    print(f"{n} Events created successfully!")
-
-
-# CREATE PARTICIPANTS
-def create_participants(n=30):
-    Participant.objects.all().delete()
-
-    events = list(Event.objects.all())
-
-    for _ in range(n):
-        participant = Participant.objects.create(
-            name=fake.name(),
-            email=fake.unique.email()
+        # assign random users
+        assigned_users = random.sample(
+            users,
+            min(len(users), random.randint(1, 5))
         )
 
-        # Assign each participant to 1–5 random events
-        assigned_events = random.sample(events, random.randint(1, 5))
-        participant.events.set(assigned_events)
+        event.participants.set(assigned_users)
 
-    print(f"{n} Participants created successfully!")
+    print(f"{n} Events created successfully!")
 
 
 # RUN ALL
 def populate():
     print("Populating database with fake data...")
+
     create_categories()
+    create_users()
     create_events()
-    create_participants()
+
     print("Done! Database populated successfully.")
 
 

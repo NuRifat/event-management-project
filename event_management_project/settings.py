@@ -1,8 +1,6 @@
 from pathlib import Path
 from decouple import config
 
-import dj_database_url
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -10,8 +8,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com', 'http://127.0.0.1:8000']
+ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
@@ -22,8 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'events',
-    'users',
     'core',
+    'users.apps.UsersConfig',
     #'debug_toolbar',
 ]
 
@@ -35,7 +32,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 INTERNAL_IPS = [
@@ -67,24 +63,12 @@ WSGI_APPLICATION = 'event_management_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-#For postgreSQL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'event_management',
-#         'USER': 'postgres',
-#         'PASSWORD': 'password',
-#         'HOST': 'localhost',
-#         'PORT': '5432'
-#     }
-# }
-
-#rendering deploy
+# Database (SQLite only)
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://event_manager_db_9i7l_user:DDPp3WX7E6d8SCFz8r9S745iMkhij1qo@dpg-d5t2p9ogjchc73bbshug-a.virginia-postgres.render.com/event_manager_db_9i7l',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -128,7 +112,6 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
