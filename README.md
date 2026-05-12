@@ -31,6 +31,16 @@ A full-featured Django web application for managing events, users, and RSVPs —
 - Personal RSVP dashboard for participants
 
 ---
+## Demo Credentials
+
+Use the following credentials to log in and test the system:
+
+### Admin
+
+```plaintext
+username: admin
+Password: password
+```
 
 ## 🛠️ Tech Stack
 
