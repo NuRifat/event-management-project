@@ -1,17 +1,18 @@
 from pathlib import Path
 from decouple import config
+import cloudinary
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
+ALLOWED_HOSTS = [".vercel.app","127.0.0.1"]
 
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,11 +22,14 @@ INSTALLED_APPS = [
     'events',
     'core',
     'users.apps.UsersConfig',
+    'cloudinary',
+    'cloudinary_storage',
     #'debug_toolbar',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,20 +61,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'event_management_project.wsgi.application'
+WSGI_APPLICATION = 'event_management_project.wsgi.app'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Database (SQLite only)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -111,6 +124,7 @@ STATICFILES_DIRS = [
     BASE_DIR/'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
 MEDIA_URL = '/media/'
